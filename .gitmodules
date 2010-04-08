@@ -1,0 +1,3 @@
+[submodule "erlsom"]
+	path = deps/erlsom
+	url = git://github.com/dweldon/erlsom.git
