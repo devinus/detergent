@@ -30,8 +30,8 @@
 -export([qtest/0]).
 
 
--include("../include/detergent.hrl").
--include("../deps/erlsom/src/erlsom.hrl").
+-include("detergent.hrl").
+-include_lib("erlsom/src/erlsom.hrl").
 
 
 -define(HTTP_REQ_TIMEOUT, 20000).
