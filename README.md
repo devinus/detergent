@@ -9,7 +9,7 @@ Detergent - An emulsifying Erlang SOAP library
     $ make
 
 ## Testing
-    $ erl -pa ebin deps/erlsom/ebin
+    $ erl -pa deps/erlsom/ebin ebin
     > inets:start().
     > l(detergent).
     > detergent:qtest().
