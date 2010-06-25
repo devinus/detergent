@@ -1,7 +1,7 @@
 % -*- mode: erlang -*-
 {application, detergent,
  [{description, "An emulsifying Erlang SOAP library"},
-  {vsn, "0.1"},
+  {vsn, "0.2"},
   {modules, [detergent, detergent_dime, detergent_server]},
   {registered, []},
   {env, []},
