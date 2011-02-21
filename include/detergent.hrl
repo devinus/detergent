@@ -1,3 +1,6 @@
+-ifndef(detergent).
+-define(detergent, true).
+
 -define(DEFAULT_PREFIX, "p").
 
 -record(call_opts, {url, http_headers=[], http_client_options=[],
@@ -50,3 +53,5 @@
 -record('soap:tHeader', {anyAttribs, 'wsdl:required', 'namespace', 'encodingStyle', 'use', 'part', 'message', 'headerfault'}).
 -record('soap:tHeaderFault', {anyAttribs, 'namespace', 'encodingStyle', 'use', 'part', 'message'}).
 -record('soap:tAddress', {anyAttribs, 'wsdl:required', 'location'}).
+
+-endif.
