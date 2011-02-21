@@ -155,7 +155,7 @@ get_operation([], _Op)                               ->
 %%% Make a SOAP request (no attachments)
 %%% --------------------------------------------------------------------
 call(Wsdl, Operation, Port, Service, Headers, Message) ->
-    call_attach(Wsdl, Operation, Port, Service, Headers, Message, [], #call_opts{}).
+    call(Wsdl, Operation, Port, Service, Headers, Message, #call_opts{}).
 
 call(Wsdl, Operation, Port, Service, Headers, Message, CallOpts) ->
     call_attach(Wsdl, Operation, Port, Service, Headers, Message, [], CallOpts).
