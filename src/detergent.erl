@@ -201,10 +201,11 @@ call_attach(Wsdl, Operation, Header, Msg, Attachments)
 %%% --------------------------------------------------------------------
 call_attach(#wsdl{operations = Operations, model = Model}, 
             Operation, Port, Service, Headers, Message, Attachments, 
-            #call_opts{http_headers=HttpHeaders, http_client_options=HttpClientOptions}) ->
+            #call_opts{http_headers=HttpHeaders, 
+                http_client_options=HttpClientOptions, url=Url}) ->
     %% find the operation
     case findOperation(Operation, Port, Service, Operations) of
-	#operation{address = URL, action = SoapAction} ->
+	#operation{address = Address, action = SoapAction} ->
 	    %% Add the Soap envelope
 	    Envelope = mk_envelope(Message, Headers),
 	    %% Encode the message
@@ -214,6 +215,12 @@ call_attach(#wsdl{operations = Operations, model = Model},
 		    {ContentType, Request} = 
                         make_request_body(XmlMessage, Attachments),
                     ?dbg("+++ Request = ~p~n", [Request]),
+            URL = case Url of
+                undefined ->
+                    Address;
+                _ ->
+                   Url
+            end,
 		    HttpRes = http_request(URL, SoapAction, Request, 
                                            HttpClientOptions, HttpHeaders, 
                                            ContentType),
