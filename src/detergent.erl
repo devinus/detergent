@@ -44,7 +44,6 @@
 -record(xsd_file, {atts, name, prefix, import_specs}).
 -record(import_specs, {atts, namespace, prefix, location}).
 
--define(DefaultPrefix, "p").
 
 
 %%%

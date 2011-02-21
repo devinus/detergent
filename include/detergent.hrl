@@ -1,5 +1,7 @@
+-define(DEFAULT_PREFIX, "p").
+
 -record(call_opts, {url, http_headers=[], http_client_options=[],
-                    prefix="p"}).
+                    prefix=?DEFAULT_PREFIX}).
 -record(wsdl, {operations, model, module}).
 -record(port, {service, port, binding, address}).
 -record(operation, {service, port, operation, binding, address, action}).
