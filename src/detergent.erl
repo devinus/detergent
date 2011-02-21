@@ -13,7 +13,7 @@
 	 initModelFile/1,
 	 config_file_xsd/0,
 	 call/3, call/4, call/5, call/6,
-	 call_attach/4, call_attach/5, call_attach/8,
+	 call_attach/4, call_attach/5, call_attach/6, call_attach/8,
 	 write_hrl/2, write_hrl/3,
 	 findHeader/2,
 	 parseMessage/2,
@@ -155,7 +155,7 @@ get_operation([], _Op)                               ->
 %%% Make a SOAP request (no attachments)
 %%% --------------------------------------------------------------------
 call(Wsdl, Operation, Port, Service, Headers, Message) ->
-	call_attach(Wsdl, Operation, Port, Service, Headers, Message, []).
+    call_attach(Wsdl, Operation, Port, Service, Headers, Message, [], #call_opts{}).
 
 
 %%% --------------------------------------------------------------------
@@ -165,13 +165,20 @@ call_attach(WsdlURL, Operation, ListOfData, Attachments)
   when is_list(WsdlURL) ->
     Wsdl = initModel(WsdlURL, ?DefaultPrefix),
     call_attach(Wsdl, Operation, ListOfData, Attachments);
-call_attach(Wsdl, Operation, ListOfData, Attachments) 
+call_attach(Wsdl, Operation, ListOfData, Attachments)  ->
+    call_attach(Wsdl, Operation, ListOfData, Attachments, #call_opts{}).
+
+call_attach(WsdlURL, Operation, ListOfData, Attachments, CallOpts) 
+  when is_list(WsdlURL) ->
+    Wsdl = initModel(WsdlURL, ?DefaultPrefix),
+    call_attach(Wsdl, Operation, ListOfData, Attachments, CallOpts);
+call_attach(Wsdl, Operation, ListOfData, Attachments, CallOpts) 
   when is_record(Wsdl, wsdl) ->
     case get_operation(Wsdl#wsdl.operations, Operation) of
 	{ok, Op} ->
 	    Msg = mk_msg(?DefaultPrefix, Operation, ListOfData),
 	    call_attach(Wsdl, Operation, Op#operation.port, 
-                        Op#operation.service, [], Msg, Attachments);
+                        Op#operation.service, [], Msg, Attachments, CallOpts);
 	Else ->
 	    Else
     end.
@@ -180,17 +187,17 @@ call_attach(Wsdl, Operation, ListOfData, Attachments)
 %%% Takes the actual records for the Header and Body message 
 %%% (with attachments)
 %%% --------------------------------------------------------------------
-call_attach(WsdlURL, Operation, Header, Msg, Attachments) 
+call_attach(WsdlURL, Operation, Header, Msg, Attachments, CallOpts) 
   when is_list(WsdlURL) ->
     Wsdl = initModel(WsdlURL, ?DefaultPrefix),
-    call_attach(Wsdl, Operation, Header, Msg, Attachments);
-call_attach(Wsdl, Operation, Header, Msg, Attachments) 
+    call_attach(Wsdl, Operation, Header, Msg, Attachments, CallOpts);
+call_attach(Wsdl, Operation, Header, Msg, Attachments, CallOpts) 
   when is_record(Wsdl, wsdl) ->
     case get_operation(Wsdl#wsdl.operations, Operation) of
 	{ok, Op} ->
 	    call_attach(Wsdl, Operation, Op#operation.port, 
                         Op#operation.service, 
-		 Header, Msg, Attachments);
+		 Header, Msg, Attachments, CallOpts);
 	Else ->
 	    Else
     end.
