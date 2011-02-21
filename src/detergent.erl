@@ -92,34 +92,27 @@ wsdl_op_action(#operation{action = Action}) -> Action.
 %%% --------------------------------------------------------------------
 %%% For Quick deployment
 %%% --------------------------------------------------------------------
-call(WsdlURL, Operation, ListOfData) when is_list(WsdlURL) ->
-    Wsdl = initModel(WsdlURL, ?DefaultPrefix),
-    call(Wsdl, Operation, ListOfData);
-call(Wsdl, Operation, ListOfData) when is_record(Wsdl, wsdl) ->
+call(Wsdl, Operation, ListOfData) ->
+    call(Wsdl, Operation, ListOfData, #call_opts{}).
+
+call(WsdlURL, Operation, ListOfData, #call_opts{prefix=DefaultPrefix}=CallOpts) 
+    when is_list(WsdlURL) ->
+    Wsdl = initModel(WsdlURL, DefaultPrefix),
+    call(Wsdl, Operation, ListOfData, CallOpts);
+call(Wsdl, Operation, ListOfData, #call_opts{prefix=DefaultPrefix}=CallOpts) when is_record(Wsdl, wsdl) ->
     case get_operation(Wsdl#wsdl.operations, Operation) of
 	{ok, Op} ->
-	    Msg = mk_msg(?DefaultPrefix, Operation, ListOfData),
+	    Msg = mk_msg(DefaultPrefix, Operation, ListOfData),
 	    call(Wsdl, Operation, Op#operation.port, 
-                 Op#operation.service, [], Msg);
+                 Op#operation.service, [], Msg, CallOpts);
 	Else ->
 	    Else
-    end.
-
+    end;
 %%% --------------------------------------------------------------------
-%%% With additional specified prefix
+%%% Takes the actual records for the Header and Body message.
 %%% --------------------------------------------------------------------
-call(WsdlURL, Operation, ListOfData, prefix, Prefix) when is_list(WsdlURL) ->
-	Wsdl = initModel(WsdlURL, Prefix),
-	call(Wsdl, Operation, ListOfData, prefix, Prefix );
-call(Wsdl, Operation, ListOfData, prefix, Prefix) when is_record(Wsdl, wsdl) ->
-	case get_operation(Wsdl#wsdl.operations, Operation) of
-	{ok, Op} ->
-	    Msg = mk_msg(Prefix, Operation, ListOfData),
-	    call(Wsdl, Operation, Op#operation.port, 
-                 Op#operation.service, [], Msg);
-	Else ->
-	    Else
-    end.
+call(Wsdl, Operation, Header, Msg) ->
+    call(Wsdl, Operation, Header, Msg, #call_opts{}).
 
 
 
