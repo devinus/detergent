@@ -164,10 +164,6 @@ call(Wsdl, Operation, Port, Service, Headers, Message, CallOpts) ->
 %%% --------------------------------------------------------------------
 %%% For Quick deployment (with attachments)
 %%% --------------------------------------------------------------------
-call_attach(WsdlURL, Operation, ListOfData, Attachments) 
-  when is_list(WsdlURL) ->
-    Wsdl = initModel(WsdlURL, ?DefaultPrefix),
-    call_attach(Wsdl, Operation, ListOfData, Attachments);
 call_attach(Wsdl, Operation, ListOfData, Attachments)  ->
     call_attach(Wsdl, Operation, ListOfData, Attachments, #call_opts{}).
 
