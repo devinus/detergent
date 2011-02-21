@@ -12,7 +12,7 @@
 -export([initModel/1, initModel/2, 
 	 initModelFile/1,
 	 config_file_xsd/0,
-	 call/3, call/4, call/5, call/6,
+	 call/3, call/4, call/5, call/6, call/7,
 	 call_attach/4, call_attach/5, call_attach/6, call_attach/8,
 	 write_hrl/2, write_hrl/3,
 	 findHeader/2,
@@ -156,6 +156,9 @@ get_operation([], _Op)                               ->
 %%% --------------------------------------------------------------------
 call(Wsdl, Operation, Port, Service, Headers, Message) ->
     call_attach(Wsdl, Operation, Port, Service, Headers, Message, [], #call_opts{}).
+
+call(Wsdl, Operation, Port, Service, Headers, Message, CallOpts) ->
+    call_attach(Wsdl, Operation, Port, Service, Headers, Message, [], CallOpts).
 
 
 %%% --------------------------------------------------------------------
