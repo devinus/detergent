@@ -122,17 +122,16 @@ call(Wsdl, Operation, ListOfData, prefix, Prefix) when is_record(Wsdl, wsdl) ->
     end.
 
 
-%%% --------------------------------------------------------------------
-%%% Takes the actual records for the Header and Body message.
-%%% --------------------------------------------------------------------
-call(WsdlURL, Operation, Header, Msg) when is_list(WsdlURL) ->
-    Wsdl = initModel(WsdlURL, ?DefaultPrefix),
-    call(Wsdl, Operation, Header, Msg);
-call(Wsdl, Operation, Header, Msg) when is_record(Wsdl, wsdl) ->
+
+call(WsdlURL, Operation, Header, Msg, #call_opts{prefix=DefaultPrefix}=CallOpts) 
+    when is_list(WsdlURL) ->
+    Wsdl = initModel(WsdlURL, DefaultPrefix),
+    call(Wsdl, Operation, Header, Msg, CallOpts);
+call(Wsdl, Operation, Header, Msg, CallOpts) when is_record(Wsdl, wsdl) ->
     case get_operation(Wsdl#wsdl.operations, Operation) of
 	{ok, Op} ->
 	    call(Wsdl, Operation, Op#operation.port, Op#operation.service, 
-		 Header, Msg);
+		 Header, Msg, CallOpts);
 	Else ->
 	    Else
     end.
