@@ -13,7 +13,7 @@
 	 initModelFile/1,
 	 config_file_xsd/0,
 	 call/3, call/4, call/5, call/6,
-	 call_attach/4, call_attach/5, call_attach/7,
+	 call_attach/4, call_attach/5, call_attach/8,
 	 write_hrl/2, write_hrl/3,
 	 findHeader/2,
 	 parseMessage/2,
@@ -200,7 +200,8 @@ call_attach(Wsdl, Operation, Header, Msg, Attachments)
 %%% Make a SOAP request (with attachments)
 %%% --------------------------------------------------------------------
 call_attach(#wsdl{operations = Operations, model = Model}, 
-            Operation, Port, Service, Headers, Message, Attachments) ->
+            Operation, Port, Service, Headers, Message, Attachments, 
+            #call_opts{http_headers=HttpHeaders, http_client_options=HttpClientOptions}) ->
     %% find the operation
     case findOperation(Operation, Port, Service, Operations) of
 	#operation{address = URL, action = SoapAction} ->
@@ -212,8 +213,6 @@ call_attach(#wsdl{operations = Operations, model = Model},
 				
 		    {ContentType, Request} = 
                         make_request_body(XmlMessage, Attachments),
-		    HttpHeaders = [],
-		    HttpClientOptions = [],
                     ?dbg("+++ Request = ~p~n", [Request]),
 		    HttpRes = http_request(URL, SoapAction, Request, 
                                            HttpClientOptions, HttpHeaders, 
