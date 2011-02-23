@@ -160,13 +160,13 @@ call_attach(Wsdl, Operation, ListOfData, Attachments)  ->
 
 call_attach(WsdlURL, Operation, ListOfData, Attachments, CallOpts) 
   when is_list(WsdlURL) ->
-    Wsdl = initModel(WsdlURL, ?DefaultPrefix),
+    Wsdl = initModel(WsdlURL, ?DEFAULT_PREFIX),
     call_attach(Wsdl, Operation, ListOfData, Attachments, CallOpts);
 call_attach(Wsdl, Operation, ListOfData, Attachments, CallOpts) 
   when is_record(Wsdl, wsdl) ->
     case get_operation(Wsdl#wsdl.operations, Operation) of
 	{ok, Op} ->
-	    Msg = mk_msg(?DefaultPrefix, Operation, ListOfData),
+	    Msg = mk_msg(?DEFAULT_PREFIX, Operation, ListOfData),
 	    call_attach(Wsdl, Operation, Op#operation.port, 
                         Op#operation.service, [], Msg, Attachments, CallOpts);
 	Else ->
@@ -179,7 +179,7 @@ call_attach(Wsdl, Operation, ListOfData, Attachments, CallOpts)
 %%% --------------------------------------------------------------------
 call_attach(WsdlURL, Operation, Header, Msg, Attachments, CallOpts) 
   when is_list(WsdlURL) ->
-    Wsdl = initModel(WsdlURL, ?DefaultPrefix),
+    Wsdl = initModel(WsdlURL, ?DEFAULT_PREFIX),
     call_attach(Wsdl, Operation, Header, Msg, Attachments, CallOpts);
 call_attach(Wsdl, Operation, Header, Msg, Attachments, CallOpts) 
   when is_record(Wsdl, wsdl) ->
@@ -279,7 +279,7 @@ mk_envelope(Messages, Headers) when is_list(Messages),is_list(Headers) ->
 %%% Parse a WSDL file and return a 'Model'
 %%% -------------------------------------------------------------------- 
 initModel(WsdlFile) ->
-    initModel(WsdlFile, ?DefaultPrefix).
+    initModel(WsdlFile, ?DEFAULT_PREFIX).
 
 initModel(WsdlFile, Prefix) ->
     PrivDir = priv_dir(), 
