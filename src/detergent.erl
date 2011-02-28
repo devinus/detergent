@@ -311,7 +311,8 @@ initModel2(WsdlFile, Prefix, Path, Import, AddFiles) ->
 					       {include_files, [IncludeWsdl]}]),
     %% add the xsd model (since xsd is also used in the wsdl)
     WsdlModel2 = erlsom:add_xsd_model(WsdlModel),
-    Options = makeOptions(Import),
+    IncludeDir = filename:dirname(WsdlFile),
+    Options = [{dir_list, [IncludeDir]} | makeOptions(Import)],
     %% parse Wsdl
     {Model, Operations} = parseWsdls([WsdlFile], Prefix, WsdlModel2, Options, {undefined, []}),
     %% TODO: add files as required
