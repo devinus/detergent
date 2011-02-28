@@ -16,7 +16,7 @@
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
          terminate/2, code_change/3]).
 
--include("detergent.hrl").
+-include_lib("detergent.hrl").
 
 -define(SERVER, ?MODULE).
 
@@ -38,11 +38,11 @@
 %% Description: Starts the server
 %%--------------------------------------------------------------------
 start_link() ->
-	start_link([]).
+    start_link([]).
 start_link(L) ->
     %% We are dependent on erlsom
     case code:ensure_loaded(erlsom) of
-        {error, _} -> 
+        {error, _} ->
             Emsg = "could not load erlsom",
             error_logger:error_msg("~p: exiting, reason: ~s~n",
                                    [?MODULE, Emsg]),
@@ -78,18 +78,18 @@ setup(Id, WsdlFile, Prefix) when is_tuple(Id),size(Id)==2 ->
 %% Description: Initiates the server
 %%--------------------------------------------------------------------
 init(L) -> %% [ {{Mod,Handler}, WsdlFile} ]
-	WsdlList = lists:foldl( fun( SoapSrvMod, OldList) -> 
-									setup_on_init( SoapSrvMod, OldList ) 
-							end,[],L),
+    WsdlList = lists:foldl( fun( SoapSrvMod, OldList) ->
+                                    setup_on_init( SoapSrvMod, OldList )
+                            end,[],L),
     {ok, #s{wsdl_list = WsdlList}}.
 
 setup_on_init( {Id, WsdlFile}, OldList ) when is_tuple(Id),size(Id)==2 ->
-	Wsdl = detergent:initModel(WsdlFile),
-	uinsert({Id, Wsdl}, OldList);
+    Wsdl = detergent:initModel(WsdlFile),
+    uinsert({Id, Wsdl}, OldList);
 setup_on_init( {Id, WsdlFile, Prefix}, OldList ) when is_tuple(Id),size(Id)==2 ->
-	Wsdl = detergent:initModel(WsdlFile, Prefix),
-	uinsert({Id, Wsdl}, OldList).
-	
+    Wsdl = detergent:initModel(WsdlFile, Prefix),
+    uinsert({Id, Wsdl}, OldList).
+
 %%--------------------------------------------------------------------
 %% Function: %% handle_call(Request, From, State) -> {reply, Reply, State} |
 %%                                      {reply, Reply, State, Timeout} |
@@ -150,14 +150,14 @@ request(State, {M,F} = Id, {Req, Attachments}, SessionValue, Action) ->
     {ok, Model} = get_model(State, Id),
     %%error_logger:info_report([?MODULE, {payload, Req}]),
     case catch detergent:parseMessage(Req, Model) of
-        {ok, Header, Body} -> 
+        {ok, Header, Body} ->
             %% call function
-            result(Model, catch apply(M, F, [Header, Body, 
+            result(Model, catch apply(M, F, [Header, Body,
                                              Action, SessionValue,
-					     Attachments]));
+                         Attachments]));
         {error, Error} ->
             cli_error(Error);
-        OtherError -> 
+        OtherError ->
             srv_error(io_lib:format("Error parsing message: ~p", [OtherError]))
     end;
 request(State, {M,F} = Id, Req, SessionValue, Action) ->
@@ -165,13 +165,13 @@ request(State, {M,F} = Id, Req, SessionValue, Action) ->
     {ok, Model} = get_model(State, Id),
     Umsg = (catch erlsom_lib:toUnicode(Req)),
     case catch detergent:parseMessage(Umsg, Model) of
-        {ok, Header, Body} -> 
+        {ok, Header, Body} ->
             %% call function
-            result(Model, catch apply(M, F, [Header, Body, 
+            result(Model, catch apply(M, F, [Header, Body,
                                              Action, SessionValue]));
         {error, Error} ->
             cli_error(Error);
-        OtherError -> 
+        OtherError ->
             srv_error(io_lib:format("Error parsing message: ~p", [OtherError]))
     end.
 
@@ -203,31 +203,31 @@ return(Model, ResHeader, ResBody, ResCode, SessVal, Files) ->
                                 'Header' = Header2},
     case catch erlsom:write(Envelope, Model) of
         {ok, XmlDoc} ->
-	    case Files of
-		undefined ->
-		    {ok, XmlDoc, ResCode, SessVal};
-		_ ->
-		    DIME = detergent_dime:encode(XmlDoc, Files),
-		    {ok, DIME, ResCode, SessVal}
-	    end;
+        case Files of
+        undefined ->
+            {ok, XmlDoc, ResCode, SessVal};
+        _ ->
+            DIME = detergent_dime:encode(XmlDoc, Files),
+            {ok, DIME, ResCode, SessVal}
+        end;
         {error, WriteError} ->
             srv_error(f("Error writing XML: ~p", [WriteError]));
         OtherWriteError ->
-            error_logger:error_msg("~p(~p): OtherWriteError=~p~n", 
+            error_logger:error_msg("~p(~p): OtherWriteError=~p~n",
                                    [?MODULE, ?LINE, OtherWriteError]),
             srv_error(f("Error writing XML: ~p", [OtherWriteError]))
     end.
 
 f(S,A) -> lists:flatten(io_lib:format(S,A)).
 
-cli_error(Error) -> 
-    error_logger:error_msg("~p(~p): Cli Error: ~p~n", 
+cli_error(Error) ->
+    error_logger:error_msg("~p(~p): Cli Error: ~p~n",
                            [?MODULE, ?LINE, Error]),
     Fault = detergent:makeFault("Client", "Client error"),
     {error, Fault, ?BAD_MESSAGE_CODE}.
 
-srv_error(Error) -> 
-    error_logger:error_msg("~p(~p): Srv Error: ~p~n", 
+srv_error(Error) ->
+    error_logger:error_msg("~p(~p): Srv Error: ~p~n",
                            [?MODULE, ?LINE, Error]),
     Fault = detergent:makeFault("Server", "Server error"),
     {error, Fault, ?SERVER_ERROR_CODE}.
