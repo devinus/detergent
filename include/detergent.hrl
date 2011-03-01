@@ -1,10 +1,13 @@
--ifndef(detergent).
--define(detergent, true).
+-ifndef(DETERGENT).
+-define(DETERGENT, true).
 
 -define(DEFAULT_PREFIX, "p").
 
--record(call_opts, {url, http_headers=[], http_client_options=[],
-                    prefix=?DEFAULT_PREFIX}).
+-record(call_opts, {url, prefix=?DEFAULT_PREFIX,
+                    http_headers=[],
+                    http_client_options=[],
+                    request_logger=fun(_) -> ok end,
+                    response_logger=fun(_) -> ok end}).
 
 -record(wsdl, {operations, model, module}).
 -record(port, {service, port, binding, address}).

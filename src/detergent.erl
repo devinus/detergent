@@ -198,8 +198,10 @@ call_attach(Wsdl, Operation, Header, Msg, Attachments, CallOpts)
 %%% --------------------------------------------------------------------
 call_attach(#wsdl{operations = Operations, model = Model},
             Operation, Port, Service, Headers, Message, Attachments,
-            #call_opts{http_headers=HttpHeaders,
-                http_client_options=HttpClientOptions, url=Url}) ->
+            #call_opts{url=Url, http_headers=HttpHeaders,
+                       http_client_options=HttpClientOptions,
+                       request_logger=RequestLogger,
+                       response_logger=ResponseLogger}) ->
     %% find the operation
     case findOperation(Operation, Port, Service, Operations) of
     #operation{address = Address, action = SoapAction} ->
@@ -208,6 +210,7 @@ call_attach(#wsdl{operations = Operations, model = Model},
         %% Encode the message
         case erlsom:write(Envelope, Model) of
         {ok, XmlMessage} ->
+            RequestLogger(XmlMessage),
             {ContentType, Request} =
                         make_request_body(XmlMessage, Attachments),
                     ?dbg("+++ Request = ~p~n", [Request]),
@@ -223,6 +226,7 @@ call_attach(#wsdl{operations = Operations, model = Model},
                     ?dbg("+++ HttpRes = ~p~n", [HttpRes]),
             case HttpRes of
             {ok, _Code, _ReturnHeaders, Body} ->
+                ResponseLogger(Body),
                 parseMessage(Body, Model);
             Error ->
                 %% in case of HTTP error: return
