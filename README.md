@@ -43,6 +43,10 @@ Rebar will first pull in Erlsom as a dependency
 from GitHub, attempt to build it, then build
 Detergent.
 
+And to install:
+
+    $ sudo make install
+
 ## Testing
 
 To test your Detergent build, start an Erlang
@@ -52,7 +56,7 @@ The qtest/0 function attempts to call a web
 service at webservicex.net to retrieve the
 weather repeat for Boston.
 
-    $ erl -pa deps/erlsom/ebin ebin
+    $ erl 
     > inets:start().
     > detergent:qtest().
 
