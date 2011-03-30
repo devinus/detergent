@@ -6,3 +6,6 @@ get-deps:
 
 clean:
 	@(./rebar clean)
+
+install:
+	@(./rebar install)
